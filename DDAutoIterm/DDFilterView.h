@@ -32,4 +32,7 @@
 @property (nonatomic, assign) CGFloat padding;
 
 
+- (NSArray *)hasSelectIterms;
+
+
 @end

@@ -10,6 +10,7 @@
 
 CGFloat DDMargin = 15;
 
+CGFloat KDDFilterViewBtnTag = 50;
 
 @interface DDFilterView ()
 
@@ -35,47 +36,6 @@ CGFloat DDMargin = 15;
     return self;
 }
 
-
-
-- (void)setTagTexts:(NSArray<NSString *> *)tagTexts {
-    
-    _tagTexts = tagTexts;
-    
-    [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
-    NSMutableArray *tagsM = [NSMutableArray array];
-    for (int i = 0; i < tagTexts.count; i++) {
-        UIButton *btn = [self btnWithTitle:tagTexts[i]];
-        [self addSubview:btn];
-        [tagsM addObject:btn];
-    }
-    // 计算位置
-    CGFloat currentX = 0;
-    CGFloat currentY = 0;
-    CGFloat countRow = 0;
-    CGFloat countCol = 0;
-    // 调整布局
-    for (UIButton *subView in tagsM) {
-        // 当搜索字数过多，宽度为contentView的宽度
-        if (subView.width > self.width) subView.width = self.width;
-        if (currentX + subView.width + DDMargin * countRow > self.width) { // 得换行
-            subView.x = 0;
-            subView.y = (currentY += subView.height) + DDMargin * ++countCol;
-            currentX = subView.width;
-            countRow = 1;
-        } else { // 不换行
-            subView.x = (currentX += subView.width) - subView.width + DDMargin * countRow;
-            subView.y = currentY + DDMargin * countCol;
-            countRow ++;
-        }
-    }
-    
-    self.col = countCol;
-    // 设置contentView高度
-    self.height = CGRectGetMaxY(self.subviews.lastObject.frame);
-}
-
-
 /*! 使控件居中 */
 - (void)makeSubViewCenter {
     
@@ -86,7 +46,6 @@ CGFloat DDMargin = 15;
         NSMutableArray *c1 = [NSMutableArray array];
         
         for (UIView *v in subVs) {
-//            NSLog(@"----------%@",NSStringFromCGRect(v.frame));
             if (v.y == (v.height + DDMargin) * i ) {
                 [c1 addObject:v];
             }
@@ -148,7 +107,61 @@ CGFloat DDMargin = 15;
     }
 }
 
+- (NSArray *)hasSelectIterms {
+    
+    NSMutableArray *mutab = [NSMutableArray array];
+    
+    for (UIButton *btn in self.subviews) {
+        if (btn.selected) {
+            [mutab addObject:btn.titleLabel.text];
+        }
+    }
+    
+    return mutab;
+}
 
+
+
+
+
+- (void)setTagTexts:(NSArray<NSString *> *)tagTexts {
+    
+    _tagTexts = tagTexts;
+    
+    [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    NSMutableArray *tagsM = [NSMutableArray array];
+    for (int i = 0; i < tagTexts.count; i++) {
+        UIButton *btn = [self btnWithTitle:tagTexts[i]];
+        btn.tag = KDDFilterViewBtnTag + i;
+        [self addSubview:btn];
+        [tagsM addObject:btn];
+    }
+    // 计算位置
+    CGFloat currentX = 0;
+    CGFloat currentY = 0;
+    CGFloat countRow = 0;
+    CGFloat countCol = 0;
+    // 调整布局
+    for (UIButton *subView in tagsM) {
+        // 当搜索字数过多，宽度为contentView的宽度
+        if (subView.width > self.width) subView.width = self.width;
+        if (currentX + subView.width + DDMargin * countRow > self.width) { // 得换行
+            subView.x = 0;
+            subView.y = (currentY += subView.height) + DDMargin * ++countCol;
+            currentX = subView.width;
+            countRow = 1;
+        } else { // 不换行
+            subView.x = (currentX += subView.width) - subView.width + DDMargin * countRow;
+            subView.y = currentY + DDMargin * countCol;
+            countRow ++;
+        }
+    }
+    
+    self.col = countCol;
+    // 设置contentView高度
+    self.height = CGRectGetMaxY(self.subviews.lastObject.frame);
+}
 
 
 
