@@ -1,0 +1,6 @@
+framework module Pods_DDAutoIterm {
+  umbrella header "Pods-DDAutoIterm-umbrella.h"
+
+  export *
+  module * { export * }
+}
